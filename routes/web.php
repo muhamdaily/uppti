@@ -34,6 +34,7 @@ Route::middleware(['auth.custom'])->group(function () {
 
     Route::get('welcome', [MahasiswaController::class, 'index'])->name('user.index');
     Route::resource('kegiatan', KegiatanController::class);
+    Route::put('kegiatan/{kegiatan}/status', [KegiatanController::class, 'status'])->name('kegiatan.status');
 
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 });

@@ -17,7 +17,8 @@ class InternshipController extends Controller
     public function index()
     {
         $mahasiswas = Mahasiswa::orderBy('nim', 'asc')->get();
-        return view('admin.internship.index', compact('mahasiswas'));
+        $users = User::all();
+        return view('admin.internship.index', compact('mahasiswas', 'users'));
     }
 
     /**

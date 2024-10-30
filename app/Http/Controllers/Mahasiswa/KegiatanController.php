@@ -19,7 +19,7 @@ class KegiatanController extends Controller
         $user = auth()->user();
 
         if ($user->role === 'admin') {
-            $kegiatans = Kegiatan::all();
+            $kegiatans = Kegiatan::orderBy('created_at', 'desc')->get();
         } else {
             $kegiatans = Kegiatan::where('user_id', $user->id)->get();
         }
@@ -46,14 +46,20 @@ class KegiatanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'waktu' => 'required',
+            'awal' => 'required',
+            'akhir' => 'required',
             'kegiatan' => 'required'
         ]);
+
+        Carbon::setLocale('id');
 
         $input = [
             'user_id' => auth()->user()->id,
             'nama' => auth()->user()->name,
-            'waktu' => Carbon::createFromFormat('d-m-Y H:i', $request->waktu)->format('Y-m-d H:i:s'),
+            'hari' => now()->translatedFormat('l'),
+            'tanggal' => now()->translatedFormat('d-m-Y'),
+            'awal' => Carbon::createFromFormat('H:i', $request->awal)->format('H:i'),
+            'akhir' => Carbon::createFromFormat('H:i', $request->akhir)->format('H:i'),
             'kegiatan' => $request->kegiatan
         ];
 
@@ -91,9 +97,17 @@ class KegiatanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Kegiatan $kegiatan)
     {
-        //
+        $request->validate([
+            'kegiatan' => 'required'
+        ]);
+
+        $kegiatan->update([
+            'kegiatan' => $request->kegiatan
+        ]);
+
+        return back()->withToastSuccess('Berhasil Mengubah Kegiatan');
     }
 
     /**
@@ -102,8 +116,23 @@ class KegiatanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Kegiatan $kegiatan)
     {
-        //
+        $kegiatan->delete();
+
+        return back()->withToastSuccess('Berhasil Menghapus Kegiatan');
+    }
+
+    public function status(Request $request, Kegiatan $kegiatan)
+    {
+        $request->validate([
+            'status' => 'required'
+        ]);
+
+        $kegiatan->update([
+            'status' => $request->status
+        ]);
+
+        return back()->withToastSuccess('Berhasil Mengubah Status Kegiatan');
     }
 }

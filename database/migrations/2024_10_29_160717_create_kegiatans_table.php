@@ -17,7 +17,10 @@ class CreateKegiatansTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('nama');
-            $table->dateTime('waktu');
+            $table->string('hari');
+            $table->string('tanggal');
+            $table->string('awal');
+            $table->string('akhir');
             $table->text('kegiatan');
             $table->enum('status', ['menunggu', 'ditampilkan', 'disembunyikan'])->default('menunggu');
             $table->timestamps();

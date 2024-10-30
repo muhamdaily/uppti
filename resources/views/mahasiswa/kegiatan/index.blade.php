@@ -74,24 +74,36 @@
                         <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0" id="kt_permissions_table">
                             <thead>
                                 <tr class="text-start text-gray-900 fw-bold fs-7 text-uppercase gs-0">
-                                    <th class="min-w-50px">Waktu</th>
-                                    <th class="min-w-50px">Anggota</th>
-                                    <th class="min-w-50px">Deskripsi Kegiatan</th>
+                                    <th class="min-w-50px">No</th>
+                                    <th class="min-w-50px">Nama Anggota</th>
+                                    <th class="min-w-50px">Waktu Kegiatan</th>
+                                    <th class="min-w-100px">Jam Kegiatan</th>
+                                    <th class="min-w-50px">Detail Kegiatan</th>
                                     <th class="text-center min-w-50px">Status</th>
                                     <th class="text-center min-w-50px">Opsi</th>
                                 </tr>
                             </thead>
                             <tbody class="fw-semibold text-gray-600">
                                 @foreach ($kegiatans as $kegiatan)
-                                    <tr>
+                                    <tr class="text-gray-900">
+                                        <td>{{ $loop->iteration }}</td>
                                         <td class="fw-bold">
-                                            {{ \Carbon\Carbon::parse($kegiatan->waktu)->locale('id')->translatedFormat('l, d F Y') }}
-                                        </td>
-                                        <td>
                                             {{ $kegiatan->nama }}
                                         </td>
                                         <td>
-                                            {{ $kegiatan->kegiatan }}
+                                            <a href="javascript:void(0);" class="menu-link px-3" data-bs-toggle="modal"
+                                                data-bs-target="#modal_view{{ $kegiatan->id }}">
+                                                {{ $kegiatan->hari }},
+                                                {{ \Carbon\Carbon::parse($kegiatan->waktu)->locale('id')->translatedFormat('d F Y') }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{ $kegiatan->awal }} &minus; {{ $kegiatan->akhir }} WIB
+                                        </td>
+                                        <td>
+                                            <div class="d-inline-block text-truncate" style="max-width: 300px;">
+                                                {!! nl2br(e($kegiatan->kegiatan)) !!}
+                                            </div>
                                         </td>
                                         <td class="text-center">
                                             @if ($kegiatan->status == 'menunggu')
@@ -141,7 +153,7 @@
                                                     <div class="menu-item px-3">
                                                         <a href="javascript:void(0);" class="menu-link px-3"
                                                             data-bs-toggle="modal"
-                                                            data-bs-target="#modal_password{{ $kegiatan->id }}">
+                                                            data-bs-target="#modal_status{{ $kegiatan->id }}">
                                                             Status
                                                         </a>
                                                     </div>
@@ -150,7 +162,7 @@
                                                     <!--begin::Menu item-->
                                                     <div class="menu-item px-3">
                                                         <a href="javascript:void(0);" class="menu-link px-3"
-                                                            onclick="event.preventDefault(); document.getElementById('hapus-mahasiswa-{{ $kegiatan->id }}').submit();">
+                                                            onclick="event.preventDefault(); document.getElementById('hapus-kegiatan-{{ $kegiatan->id }}').submit();">
                                                             Hapus
                                                         </a>
                                                     </div>
@@ -160,7 +172,7 @@
 
                                             <!--begin::Form Hapus-->
                                             <form action="{{ route('kegiatan.destroy', $kegiatan->id) }}" method="POST"
-                                                id="hapus-mahasiswa-{{ $kegiatan->id }}" style="display: none;">
+                                                id="hapus-kegiatan-{{ $kegiatan->id }}" style="display: none;">
                                                 @csrf
                                                 @method('DELETE')
                                             </form>
@@ -183,7 +195,8 @@
     </div>
 
     <!--begin::Modal Tambah-->
-    <div class="modal fade" data-bs-backdrop="static" tabindex="-1" id="modal_tambah" aria-hidden="true">
+    <div class="modal fade" data-bs-backdrop="static" tabindex="-1" id="modal_tambah" aria-hidden="true"
+        data-bs-focus="false">
         <div class="modal-dialog modal-lg">
             <form action="{{ route('kegiatan.store') }}" method="POST">
                 @csrf
@@ -203,10 +216,22 @@
                     <div class="modal-body">
 
                         <div class="row">
-                            <div class="mb-5 col-12">
-                                <label for="waktu" class="required form-label">Pilih Waktu</label>
-                                <input id="waktu" name="waktu" class="form-control"
-                                    placeholder="Pilih waktu kegiatan" />
+                            <div class="mb-5 col-6">
+                                <label for="awal" class="required form-label">
+                                    Waktu Awal Kegiatan
+                                </label>
+
+                                <input type="time" id="awal" name="awal" class="form-control"
+                                    placeholder="Awal Kegiatan?" />
+                            </div>
+
+                            <div class="mb-5 col-6">
+                                <label for="akhir" class="required form-label">
+                                    Waktu Akhir Kegiatan
+                                </label>
+
+                                <input type="time" id="akhir" name="akhir" class="form-control"
+                                    placeholder="Akhir Kegiatan?" />
                             </div>
 
                             <div class="mb-5 col-12">
@@ -226,18 +251,179 @@
         </div>
     </div>
     <!--end::Modal Tambah-->
+
+    <!--begin::Modal Ubah-->
+    @foreach ($kegiatans as $data)
+        <div class="modal fade" data-bs-backdrop="static" tabindex="-1" id="modal_update{{ $data->id }}"
+            aria-hidden="true" data-bs-focus="false">
+            <div class="modal-dialog modal-lg">
+                <form action="{{ route('kegiatan.update', $data->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Ubah Kegiatan</h3>
+
+                            <!--begin::Close-->
+                            <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <i class="ki-duotone ki-cross fs-1">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i>
+                            </div>
+                            <!--end::Close-->
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="mb-5 col-12">
+                                    <label for="kegiatan" class="form-label">Deskripsi Kegiatan</label>
+                                    <textarea id="kegiatan" name="kegiatan" class="form-control" data-kt-autosize="true">{{ $data->kegiatan }}</textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-sm btn-primary">Simpan</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endforeach
+    <!--end::Modal Ubah-->
+
+    <!--begin::Modal Status-->
+    @foreach ($kegiatans as $data)
+        <div class="modal fade" data-bs-backdrop="static" tabindex="-1" id="modal_status{{ $data->id }}"
+            aria-hidden="true" data-bs-focus="false">
+            <div class="modal-dialog modal-lg">
+                <form action="{{ route('kegiatan.status', $data->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Ubah Status Kegiatan</h3>
+
+                            <!--begin::Close-->
+                            <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <i class="ki-duotone ki-cross fs-1">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i>
+                            </div>
+                            <!--end::Close-->
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="mb-5 col-12">
+                                    <label for="status{{ $data->id }}" class="required form-label">
+                                        Status Kegiatan
+                                    </label>
+                                    <select id="status{{ $data->id }}" name="status" class="form-select"
+                                        data-control="select2" data-placeholder="Pilih Status"
+                                        data-dropdown-parent="#modal_status{{ $data->id }}" data-allow-clear="true"
+                                        data-hide-search="true">
+                                        <option></option>
+                                        <option value="menunggu" {{ $data->status == 'menunggu' ? 'selected' : '' }}>
+                                            Menunggu
+                                        </option>
+                                        <option value="ditampilkan"
+                                            {{ $data->status == 'ditampilkan' ? 'selected' : '' }}>
+                                            Tampilkan Kegiatan
+                                        </option>
+                                        <option value="disembunyikan"
+                                            {{ $data->status == 'disembunyikan' ? 'selected' : '' }}>
+                                            Sembunyikan Kegiatan
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-sm btn-primary">Simpan</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endforeach
+    <!--end::Modal Status-->
+
+    <!--begin::Modal Lihat Detail-->
+    @foreach ($kegiatans as $data)
+        <div class="modal fade" data-bs-backdrop="static" tabindex="-1" id="modal_view{{ $data->id }}"
+            aria-hidden="true" data-bs-focus="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Detail Kegiatan</h3>
+
+                        <!--begin::Close-->
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                            aria-label="Close">
+                            <i class="ki-duotone ki-cross fs-1">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                        </div>
+                        <!--end::Close-->
+                    </div>
+
+                    <div class="modal-body">
+                        <!--begin::Details content-->
+                        <div class="pb-5 fs-6">
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-3">Nama Anggota</div>
+                            <div class="text-gray-600">
+                                {{ $data->nama }}
+                            </div>
+                            <!--begin::Details item-->
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-3">Waktu Kegiatan</div>
+                            <div class="text-gray-600">
+                                {{ $data->hari }},
+                                {{ \Carbon\Carbon::parse($data->waktu)->locale('id')->translatedFormat('d F Y') }}
+                            </div>
+                            <!--begin::Details item-->
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-3">Jam Kegiatan</div>
+                            <div class="text-gray-600">
+                                {{ $data->awal }} &minus; {{ $data->akhir }} WIB
+                            </div>
+                            <!--begin::Details item-->
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-3">Detail Kegiatan</div>
+                            <div class="text-gray-600">
+                                {!! nl2br(e($kegiatan->kegiatan)) !!}
+                            </div>
+                            <!--begin::Details item-->
+                        </div>
+                        <!--end::Details content-->
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+    <!--end::Modal Lihat Detail-->
 @endsection
 
 @push('custom-javascript')
     <script src="assets/js/custom/apps/user-management/permissions/list.js"></script>
-    <script src="assets/js/custom/apps/user-management/permissions/add-permission.js"></script>
-    <script src="assets/js/custom/apps/user-management/permissions/update-permission.js"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
-    <script>
-        $("#waktu").flatpickr({
-            locale: "id",
-            enableTime: true,
-            dateFormat: "d-m-Y H:i",
-        });
-    </script>
 @endpush

@@ -93,7 +93,14 @@
                                             </span>
                                         </td>
                                         <td>
-                                            {{ $mahasiswa->nama }}
+                                            @if ($mahasiswa->status === 'aktif')
+                                                <a href="javascript:void(0);" class="menu-link px-3" data-bs-toggle="modal"
+                                                    data-bs-target="#modal_view{{ $mahasiswa->id }}">
+                                                    {{ $mahasiswa->nama }}
+                                                </a>
+                                            @else
+                                                {{ $mahasiswa->nama }}
+                                            @endif
                                         </td>
                                         <td>
                                             {{ $mahasiswa->prodi }}
@@ -396,21 +403,24 @@
                         </div>
 
                         <div class="modal-body">
-
                             <div class="row">
                                 <div class="mb-5 col-6">
                                     <label for="username" class="required form-label">Username</label>
                                     <input type="text" id="username" name="username" class="form-control"
-                                        placeholder="Masukkan Username" />
+                                        placeholder="Masukkan Username"
+                                        @foreach ($users as $user)
+                                        @if ($mahasiswa->nama == $user->name && $mahasiswa->status == 'aktif')
+                                        value="{{ $user->username }}"
+                                        @endif @endforeach />
                                 </div>
 
                                 <div class="mb-5 col-6">
                                     <label for="password" class="required form-label">Kata Sandi</label>
                                     <input type="text" id="password" name="password" class="form-control"
-                                        placeholder="Masukkan Kata Sandi" value="password" />
+                                        placeholder="Masukkan Kata Sandi"
+                                        @if ($mahasiswa->status == 'nonaktif') value="password" @endif />
                                 </div>
                             </div>
-
                         </div>
 
                         <div class="modal-footer">
@@ -423,6 +433,135 @@
         </div>
     @endforeach
     <!--end::Modal Password-->
+
+    <!--begin::Modal Lihat Detail-->
+    @foreach ($mahasiswas as $data)
+        <div class="modal fade" data-bs-backdrop="static" tabindex="-1" id="modal_view{{ $data->id }}"
+            aria-hidden="true" data-bs-focus="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Detail Informasi Mahasiswa &mdash; {{ $data->nama }}</h3>
+
+                        <!--begin::Close-->
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                            aria-label="Close">
+                            <i class="ki-duotone ki-cross fs-1">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                        </div>
+                        <!--end::Close-->
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <!--begin::Details item-->
+                            <div class="col-6">
+                                <div class="fw-bold mt-5">NIM Mahasiswa</div>
+                                <div class="text-gray-600">
+                                    {{ $data->nim }}
+                                </div>
+                            </div>
+                            <!--end::Details item-->
+
+                            <!--begin::Details item-->
+                            <div class="col-6">
+                                <div class="fw-bold mt-5">Nama Lengkap</div>
+                                <div class="text-gray-600">
+                                    {{ $data->nama }}
+                                </div>
+                            </div>
+                            <!--end::Details item-->
+
+                            <!--begin::Details item-->
+                            <div class="col-12">
+                                <div class="fw-bold mt-5">Program Studi</div>
+                                <div class="text-gray-600">
+                                    {{ $data->prodi }}
+                                </div>
+                            </div>
+                            <!--end::Details item-->
+
+                            <!--begin::Details item-->
+                            <div class="col-6">
+                                <div class="fw-bold mt-5">Alamat Email</div>
+                                <div class="text-gray-600">
+                                    {{ $data->email }}
+                                </div>
+                            </div>
+                            <!--end::Details item-->
+
+                            <!--begin::Details item-->
+                            <div class="col-6">
+                                <div class="fw-bold mt-5">Nomor Telepon</div>
+                                <div class="text-gray-600">
+                                    @if ($data->telepon == null)
+                                        <span>
+                                            Belum Ditambahkan
+                                        </span>
+                                    @else
+                                        {{ $data->telepon }}
+                                    @endif
+                                </div>
+                            </div>
+                            <!--end::Details item-->
+
+                            <!--begin::Details item-->
+                            <div class="col-12">
+                                <div class="fw-bold mt-5">Alamat</div>
+                                <div class="text-gray-600">
+                                    @if ($data->alamat == null)
+                                        <span>
+                                            Alamat Belum Ditambahkan
+                                        </span>
+                                    @else
+                                        {{ $data->alamat }}
+                                    @endif
+                                </div>
+                            </div>
+                            <!--end::Details item-->
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <!--begin::Details item-->
+                            <div class="col-6">
+                                <div class="fw-bold mt-5">Username</div>
+                                <div class="text-gray-600">
+                                    @foreach ($users as $user)
+                                        @if ($data->nama == $user->name)
+                                            <span class="badge badge-dark">
+                                                {{ $user->username }}
+                                            </span>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                            <!--end::Details item-->
+
+                            <!--begin::Details item-->
+                            <div class="col-6">
+                                <div class="fw-bold mt-5">Kata Sandi</div>
+                                <div class="text-gray-600">
+                                    Lupa Kata Sandi? <a href="javascript:void(0);" class="menu-link"
+                                        data-bs-toggle="modal" data-bs-target="#modal_password{{ $mahasiswa->id }}">Klik
+                                        Disini</a>
+                                </div>
+                            </div>
+                            <!--end::Details item-->
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+    <!--end::Modal Lihat Detail-->
 @endsection
 
 @push('custom-javascript')

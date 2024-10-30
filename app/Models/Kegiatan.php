@@ -12,7 +12,10 @@ class Kegiatan extends Model
     protected $fillable = [
         'user_id',
         'nama',
-        'waktu',
+        'hari',
+        'tanggal',
+        'awal',
+        'akhir',
         'kegiatan',
         'status'
     ];

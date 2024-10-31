@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\InternshipController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Mahasiswa\KegiatanController;
 use App\Http\Controllers\Mahasiswa\MahasiswaController;
+use App\Http\Controllers\MuhamDailyController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,7 +22,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
+
+Route::get('yesus/{name}/{jenis}', [MuhamDailyController::class, 'index'])->name('muhamdaily.index');
 
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'authenticate'])->name('authenticate');
@@ -33,8 +37,11 @@ Route::middleware(['auth.custom'])->group(function () {
     });
 
     Route::get('welcome', [MahasiswaController::class, 'index'])->name('user.index');
+
     Route::resource('kegiatan', KegiatanController::class);
     Route::put('kegiatan/{kegiatan}/status', [KegiatanController::class, 'status'])->name('kegiatan.status');
+
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
 
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 });

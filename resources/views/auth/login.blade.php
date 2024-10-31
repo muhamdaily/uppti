@@ -70,8 +70,8 @@
                 <!--begin::Content-->
                 <div class="d-flex flex-column flex-center p-6 p-lg-10 w-100">
                     <!--begin::Logo-->
-                    <a href="#" class="mb-0 mb-lg-20">
-                        <img alt="Logo" src="{{ asset('assets/media/logos/default-white.svg') }}"
+                    <a href="{{ route('home') }}" class="mb-0 mb-lg-20">
+                        <img alt="Logo" src="{{ asset('assets/media/logos/default-dark.svg') }}"
                             class="h-40px h-lg-50px" />
                     </a>
                     <!--end::Logo-->
@@ -99,50 +99,9 @@
                                     Selamat Datang di {{ config('app.name', 'Laravel') }}
                                 </h1>
                                 <!--end::Title-->
-                                <!--begin::Subtitle-->
-                                <div class="text-gray-500 fw-semibold fs-6">
-                                    Masuk menggunakan media sosial
-                                </div>
-                                <!--end::Subtitle=-->
                             </div>
                             <!--begin::Heading-->
-                            <!--begin::Login options-->
-                            <div class="row g-3 mb-9">
-                                <!--begin::Col-->
-                                <div class="col-md-6">
-                                    <!--begin::Google link=-->
-                                    <a href="javascript:void(0);"
-                                        class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
-                                        <img alt="Logo" src="assets/media/svg/brand-logos/google-icon.svg"
-                                            class="h-15px me-3" />
-                                        Google
-                                    </a>
-                                    <!--end::Google link=-->
-                                </div>
-                                <!--end::Col-->
-                                <!--begin::Col-->
-                                <div class="col-md-6">
-                                    <!--begin::GitHub link=-->
-                                    <a href="javascript:void(0);"
-                                        class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
-                                        <img alt="Logo" src="assets/media/svg/brand-logos/github-1.svg"
-                                            class="theme-light-show h-15px me-3" />
-                                        <img alt="Logo" src="assets/media/svg/brand-logos/github-1.svg"
-                                            class="theme-dark-show h-15px me-3" />
-                                        Github
-                                    </a>
-                                    <!--end::GitHub link=-->
-                                </div>
-                                <!--end::Col-->
-                            </div>
-                            <!--end::Login options-->
-                            <!--begin::Separator-->
-                            <div class="separator separator-content my-14">
-                                <span class="w-250px text-gray-500 fw-semibold fs-7">
-                                    Atau gunakan email
-                                </span>
-                            </div>
-                            <!--end::Separator-->
+
                             <!--begin::Input group=-->
                             <div class="fv-row mb-8">
                                 <!--begin::Email-->
@@ -170,15 +129,9 @@
                                 @enderror
                                 <!--end::Password-->
                             </div>
-                            <!--end::Input group=-->
+                            <!--end::Input group-->
                             <!--begin::Wrapper-->
                             <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
-                                <div></div>
-                                <!--begin::Link-->
-                                <a href="javascript:void(0);" class="link-primary">
-                                    Lupa kata sandi ?
-                                </a>
-                                <!--end::Link-->
                             </div>
                             <!--end::Wrapper-->
                             <!--begin::Submit button-->

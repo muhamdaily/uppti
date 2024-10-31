@@ -36,9 +36,7 @@ class AuthController extends Controller
             }
         }
 
-        return back()->withErrors([
-            'login' => 'Kredensial yang diberikan tidak cocok dengan database kami.',
-        ]);
+        return back()->withToastError('Kredensial yang diberikan tidak cocok dengan database kami.');
     }
 
     public function logout()

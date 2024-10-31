@@ -173,12 +173,9 @@
                         <!--end::Menu separator-->
                         <!--begin::Menu item-->
                         <div class="menu-item px-5">
-                            <a href="javascript:void(0);" class="menu-link px-5">Profil Saya</a>
-                        </div>
-                        <!--end::Menu item-->
-                        <!--begin::Menu item-->
-                        <div class="menu-item px-5 my-1">
-                            <a href="javascript:void(0);" class="menu-link px-5">Pengaturan Akun</a>
+                            <a href="{{ route('profile.index') }}" class="menu-link px-5">
+                                Pengaturan Akun
+                            </a>
                         </div>
                         <!--end::Menu item-->
                         <!--begin::Menu separator-->
